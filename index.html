@@ -1,4 +1,121 @@
-<script type="module" defer>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TinyJet Proxy</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/mercuryworkshop/scramjet-app@latest/public/favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght=100..800&display=swap" rel="stylesheet">
+</head>
+<body class="default">
+  <header>
+    <form id="search">
+      <input id="url" type="text" class="search-input search" placeholder="Search the web or enter URL">
+    </form>
+    <span id="gear"><i class="fa">&#xf013;</i></span>
+  </header>
+  
+  <div id="overlay">
+    <div id="settings">
+      <h3 style="margin:auto;">Settings</h3>
+      <br>
+      <h4 style="margin:auto;">WISP Server</h4>
+      <br>
+      <form style="margin:auto;" id="wispInput">
+        <input id="websocket" type="text" placeholder="wss://gointospace.app/wisp/" value="wss://gointospace.app/wisp/">
+        <button type="submit">Set WISP</button>
+      </form>
+      <br>
+      <h4 style="margin:auto;">Transport Protocol</h4>
+      <br>
+      <div style="text-align:center;">
+        <ul style="display:inline-block; text-align:left; list-style-type:none; padding:0; margin:0;">
+          <li><input type="radio" name="transport" value="epoxy" checked> Epoxy (Default)</li>
+          <li><input type="radio" name="transport" value="libcurl"> Libcurl</li>
+        </ul>
+      </div>
+      <br>
+      <h4 style="margin:auto;">Search Engine</h4>
+      <br>
+      <select id="searchEnginePicker">
+        <option value="google">Google</option>
+        <option value="bing">Bing</option>
+        <option value="duckduckgo">DuckDuckGo</option>
+        <option value="brave">Brave (default)</option>
+        <option value="custom">Custom</option>
+      </select>
+      <input id="customSearch" type="text" placeholder="https://search.example.com/search?q=%s" style="display:none; width:100%; margin-top:8px;" />
+      <br>
+      <h4 style="margin:auto;">Tab Cloaking</h4>
+      <br>
+      <label for="tabCloak">Title</label>
+      <input id="tabCloak" type="text" placeholder="Khan Academy" style="width:100%; margin-bottom:8px;" />
+      <label for="tabCloakIcon">Icon (URL)</label>
+      <input id="tabCloakIcon" type="text" placeholder="https://khanacademy.org/favicon.ico" style="width:100%; margin-bottom:8px;" />
+      <div class="flex-row" style="margin:auto; margin-bottom:12px;">
+        <button id="saveTabCloakBtn" type="button">Save Settings</button>
+        <button id="clearTabCloakBtn" type="button">Clear Settings</button>
+        <button id="previewTabCloakBtn" type="button">Preview</button>
+      </div>
+      <br>
+      <h4 style="margin:auto;">Theme</h4>
+      <br>
+      <select id="themePicker">
+        <option value="default">Default</option>
+        <option value="latte">Catppuccin Latte</option>
+        <option value="frappe">Catppuccin Frappe</option>
+        <option value="macchiato">Catppuccin Macchiato</option>
+        <option value="mocha">Catppuccin Mocha</option>
+        <option value="mrworkshop">Mr. Workshop</option>
+        <option value="aerialite">Aerialite Labs</option>
+      </select>
+      <div id="customThemeSection" style="margin-top:12px;">
+        <br>
+        <h4 class="flex-row" style="margin:auto;">Custom Themes</h4>
+        <br>
+        <input id="customThemeName" type="text" placeholder="Theme name" style="width:100%; margin-bottom:6px;" />
+        <label style="display:block; font-size:12px; margin-bottom:4px;">Base color</label>
+        <input id="customThemeBase" type="color" value="#ffffff" style="width:100%; height:30px; margin-bottom:6px;" />
+        <label style="display:block; font-size:12px; margin-bottom:4px;">Surface color</label>
+        <input id="customThemeSurface" type="color" value="#f6f6f6" style="width:100%; height:30px; margin-bottom:6px;" />
+        <label style="display:block; font-size:12px; margin-bottom:4px;">Text color</label>
+        <input id="customThemeText" type="color" value="#111111" style="width:100%; height:30px; margin-bottom:8px;" />
+        <div class="flex-row" style="margin:auto; margin-bottom:12px;">
+          <button id="saveCustomThemeBtn" type="button">Save Theme</button>
+          <button id="applyCustomThemePreviewBtn" type="button">Preview</button>
+        </div>
+        <label style="display:block; font-size:12px; margin-bottom:4px;">Saved themes</label>
+        <select id="customThemesList" style="width:100%; margin-bottom:8px;"></select>
+        <div class="flex-row" style="margin:auto; margin-bottom:12px;">
+          <button id="applyCustomThemeBtn" type="button">Apply</button>
+          <button id="deleteCustomThemeBtn" type="button">Delete</button>
+        </div>
+      </div>
+      <br>
+      <h3 style="margin:auto;">TinyJet</h3>
+      <p style="text-align:center;" id="version">Unable to retrieve version.</p>
+      <h6 style="margin:auto; font-weight:normal; text-align:center;">A teeny-tiny simple Scramjet implementation and frontend that can be statically hosted.</h6>
+      <br>
+      <h4 style="margin:auto;">Credits</h4>
+      <div style="text-align:center;">
+        <ul style="display:inline-block; text-align:left; list-style-type:none; padding:0;">
+          <li><a href="https://github.com/Sophie">Sophie:</a> Maintainer</li>
+          <li><a href="https://github.com/xmb9">xmb9:</a> Co-maintainer</li>
+          <li><a href="https://github.com/MercuryWorkshop">Mercury Workshop:</a> <a href="https://github.com/MercuryWorkshop/scramjet">Scramjet</a>, <a href="https://github.com/MercuryWorkshop/wisp-protocol">WISP</a></li>
+        </ul>
+      </div>
+      <p style="margin:auto; text-align:center;">Developed by <a href="https://aerialite.dev">Aerialite Labs</a></p>
+    </div>
+  </div>
+  
+  <iframe id="iframe" width="100%"></iframe>
+
+  <script src="https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/scramjet.all.js"></script>
+  
+  <script type="module">
     import * as BareMux from "https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/index.mjs";
 
     let version = "";
@@ -19,8 +136,10 @@
       }
     })();
 
+    // Explicitly declaring config routes to match your sw.js setup and prevent 'prefix' crashes
     const { ScramjetController } = $scramjetLoadController();
     const scramjet = new ScramjetController({ 
+      prefix: "/frontended/scramjet/",
       files: { 
         wasm: "https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/wasm.wasm", 
         all: "https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/scramjet.all.js", 
@@ -30,10 +149,10 @@
 
     try {
       scramjet.init();
-      navigator.serviceWorker.register("./sw.js");
+      navigator.serviceWorker.register("./sw.js", { scope: "/frontended/" });
     } catch (e) { console.error("scramjet failed to initialize;", e); }
 
-    const bareworker = `data:application/javascript;base64,IWZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGU9TWVzc2FnZVBvcnQucHJvdG90eXBlLnBvc3RNZXNzYWdlO2xldCB0PW51bGw7ZnVuY3Rpb24gYShlLHQsYSl7Y29uc29sZS5lcnJvcihgZXJyb3Igd2hpbGUgcHJvY2Vzc2luZyAnJHthfSc6IGAsdCksZS5wb3N0TWVzc2FnZSh7dHlwZToiZXJyb3IiLGVycm9yOnR9KX1hc3luYyBmdW5jdGlvbiBuKGEsbixsKXtjb25zdCBvPWF3YWl0IGwucmVxdWVzdChuZXcgVVJMKGEuZmV0Y2gucmVtb3RlKSxhLmZldGNoLm1ldGhvZCxhLmZldGNoLmJvZHksYS5mZXRjaC5oZWFkZXJzLG51bGwpO2lmKCFmdW5jdGlvbigpe2lmKG51bGw9PT10KXtjb25zdCBhPW5ldyBNZXNzYWdlQ2hhbm5lbCxuPW5ldyBSZWFkYWJsZVN0cmVhbTtsZXQgbDt0cnl7ZS5jYWxsKGEucG9ydDEsbixbbl0pLGw9ITB9Y2F0Y2goZSl7bD0hMX1yZXR1cm4gdD1sLGx9cmV0dXJuIHR9KCkmJm8uYm9keSBpbnN0YW5jZW9mIFJlYWRhYmxlU3RyZWFtKXtjb25zdCBlPW5ldyBSZXNwb25zZShvLmJvZHkpO28uYm9keT1hd2FpdCBlLmFycmF5QnVmZmVyKCl9by5ib2R5IGluc3RhbmNlb2YgUmVhZGFibGVTdHJlYW18fG8uYm9keSBpbnN0YW5jZW9mIEFycmF5QnVmZmVyP2UuY2FsbChuLHtteXBlOiJmZXRjaCIsZmV0Y2g6b30sW28uYm9keV0pOmUuY2FsbChuLHtteXBlOiJmZXRjaCIsZmV0Y2g6b30pfWxldCBsPW51bGwsbz0iIjtmdW5jdGlvbiBjKCl7cmV0dXJuIG5ldyBFcnJvcigidGhlcmUgYXJlIG5vIGJhcmUgY2xpZW50cyIse2NhdXNlOiJObyBCYXJlVHJhbnNwb3J0IHdhcyBzZXQuIFRyeSBjcmVhdGluZyBhIEJhcmVNdXhDb25uZWN0aW9uIGFuZCBjYWxsaW5nIHNldFRyYW5zcG9ydCgpIG9yIHNldE1hbnVhbFRyYW5zcG9ydCgpIG9uIGl0IGJlZm9yZSB1c2luZyBCYXJlQ2xpZW50LiJ9KX1mdW5jdGlvbiByKHQsYSl7Y29uc29sZSAubm90ZTsgY29uc3Qgbj1sO2xldCBvPVthXTt0LmZldGNoPy5ib2R5JiZvLnB1c2godC5mZXRjaC5ib2R5KSx0LndlYnNvY2tldD8uY2hhbm5lbCYmby5wdXNoKHQud2Vic29ja2V0LmNoYW5uZWwpLGUuY2FsbChuLHttZXNzYWdlOnQscG9ydDphfSxvKX1mdW5jdGlvbiBpKHQpe3Qub25tZXNzYWdlPWFzeW5jIHQ9Pntjb25zdCBpPXQuZGF0YS5wb3J0LGs9dC5kYXRhLm1lc3NhZ2U7aWYoInBpbmciPT09ay50eXBlKWUuY2FsbChpLHt0eXBlOiJwb25nIn0);ZWxzZSBpZigiY2V0Ij09PWsudHlwZSl0cnl7Y29uc3QgdD1hc3luYyBmdW5jdGlvbigpe30uY29uc3RydWN0b3I7aWYoImJhcmUtbXV4LXJlbW90ZSI9PT1rLmNsaWVudC5mdW5jdGlvbilsPWsuY2xpZW50LmFyZ3NbMF0sbz1gYmFyZS1tdXgtcmVtb3RlICgke2suY2xpZW50LmFyZ3NbMV19KWB7ZWxzZXtjb25zdCBlPW5ldyB0KGsuY2xpZW50LmZ1bmN0aW9uKSxbYSxuXT1hd2FpdCBlKCk7bD1uZXcgYSguLi5rLmNsaWVudC5hcmdzKSxvPW59Y29uc29sZS5sb2coInNldCB0cmFuc3BvcnQgdG8gIixsLG8pLGUuY2FsbChpLHt0eXBlOiJzZXQifSl9Y2F0Y2goZSl7YShpLGUsInNldCIpfWVsc2UgaWYoImdldCI9PT1rLnR5cGUpaS5wb3N0TWVzc2FnZSh7dHlwZToiZ2V0IixuYW1lOm99KTtZWxzZSBpZigiZmV0Y2giPT09ay50eXBlKXRyeXtpZighbCl0aHJvdyBjKCk7aWYobCBpbnN0YW5jZW9mIE1lc3NhZ2VQb3J0KXJldHVybiB2b2lkIHIoayxpKTtsLnJlYWR5fHxhd2FpdCBsLmluaXQoKSxhd2FpdCBuKGssaSxsKX1jYXRjaChlKXthKGksaWUsImZldGNoIil9ZWxzZSBpZigiIHdlYnNvY2tldCI9PT1rLnR5cGUpdHJ5e2lmKCFsKXRocm93IGMoKTtpZihsIGluc3RhbmNlb2YgTWVzc2FnZVBvcnQpcmV0dXJuIHZvaWQgcihrLGkpO2wucmVhZHl8fGF3YWl0IGwuaW5pdCgpLGF3YWl0IGFzeW5jIGZ1bmN0aW9uKHQsYSwobil7Y29uc3RbcyxvXT1uLmNvbm5lY3QobmV3IFVSTCh0LndlYnNvY2tldC51cmwpLHQud2Vic29ja2V0LnByb3RvY29scyx0LndlYnNvY2tldC5yZXF1ZXN0SGVhZGVycywoYT0+e2UuY2FsbCh0LndlYnNvY2tldC5jaGFubmVsLHt0eXBlOiJvcGVuIixhcmdzOlthXX0pfSksKGE9PnthIGluc3RhbmNlb2YgQXJyYXlCdWZmZXI/ZS5jYWxsKHQud2Vic29ja2V0LmNoYW5uZWwse3R5cGU6Im1lc3NhZ2UiLGFyZ3M6W2FdfSxbYV0pOmUuY2FsbCh0LndlYnNvY2tldC5jaGFubmVsLHt0eXBlOiJtZXNzYWdlIixhcmdzOlthXX0pfSksKChhLG4pPT57ZS5jYWxsKHQud2Vic29ja2V0LmNoYW5uZWwse3R5cGU6ImNsb3NlIixhcmdzOlthLG5dfSl9KSwoYT0+e2UuY2FsbCh0LndlYnNvY2tldC5jaGFubmVsLHt0eXBlOiJlcnJvciIsYXJnczpbYV19KX0pKTt0LndlYnNvY2tldC5jaGFubmVsLm9ubWVzc2FnZT1lPT57ImRhdGEiPT09ZS5kYXRhLnR5cGU/cyhlLmRhdGEuZGF0YSk6ImNsb3NlIj09PWUuZGF0YS50eXBlJiZvKGUuZGF0YS5jbG9zZUNvZGUsZS5kYXRhLmNsb3NlUmVhc29uKX0sZS5jYWxsKGEse3R5cGU6IndlYnNvY2tldCJ9KX0oayxpLGwpfY2F0Y2goZSl7YShpLGUsIndlYnNvY2tldCIpfX19bmV3IEJyb2FkY2FzdENoYW5uZWwoImJhcmUtbXV4IikucG9zdE1lc3NhZ2Uoe3R5cGU6InJlZnJlc2hQb3J0In0pLHNlbGYub25jb25uZWN0PWU9PntpKGUucG9ydHNbMF0pfSxjb25zb2xlLmRlYnVnKCJiYXJlLW11eDogcnVubmluZyB2Mi4xLjcgKGJ1aWxkIGM1NmQyODYpIil9KCk7Ci8vIyBzb3VyY2VNYXBwaW5nVVJMPXdvcmtlci5qcy5tYXA=`;
+    const bareworker = `data:application/javascript;base64,IWZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGU9TWVzc2FnZVBvcnQucHJvdG90eXBlLnBvc3RNZXNzYWdlO2xldCB0PW51bGw7ZnVuY3Rpb24gYShlLHQsYSl7Y29uc29sZS5lcnJvcihgZXJyb3Igd2hpbGUgcHJvY2Vzc2luZyAnJHthfSc6IGAsdCksZS5wb3N0TWVzc2FnZSh7dHlwZToiZXJyb3IiLGVycm9yOnR9KX1hc3luYyBmdW5jdGlvbiBuKGEsbixsKXtjb25zdCBvPWF3YWl0IGwucmVxdWVzdChuZXcgVVJMKGEuZmV0Y2gucmVtb3RlKSxhLmZldGNoLm1ldGhvZCxhLmZldGNoLmJvZHksYS5mZXRjaC5oZWFkZXJzLG51bGwpO2lmKCFmdW5jdGlvbigpe2lmKG51bGw9PT10KXtjb25zdCBhPW5ldyBNZXNzYWdlQ2hhbm5lbCxuPW5ldyBSZWFkYWJsZVN0cmVhbTtsZXQgbDt0cnl7ZS5jYWxsKGEucG9ydDEsbixbbl0pLGw9ITB9Y2F0Y2goZSl7bD0hMX1yZXR1cm4gdD1sLGx9cmV0dXJuIHR9KCkmJm8uYm9keSBpbnN0YW5jZW9mIFJlYWRhYmxlU3RyZWFtKXtjb25zdCBlPW5ldyBSZXNwb25zZShvLmJvZHkpO28uYm9keT1hd2FpdCBlLmFycmF5QnVmZmVyKCl9by5ib2R5IGluc3RhbmNlb2YgUmVhZGFibGVTdHJlYW18fG8uYm9keSBpbnN0YW5jZW9mIEFycmF5QnVmZmVyP2UuY2FsbChuLHtteXBlOiJmZXRjaCIsZmV0Y2g6b30sW28uYm9keV0pOmUuY2FsbChuLHtteXBlOiJmZXRjaCIsZmV0Y2g6b30pfWxldCBsPW51bGwsbz0iIjtmdW5jdGlvbiBjKCl7cmV0dXJuIG5ldyBFcnJvcigidGhlcmUgYXJlIG5vIGJhcmUgY2xpZW50cyIse2NhdXNlOiJObyBCYXJlVHJhbnNwb3J0IHdhcyBzZXQuIFRyeSBjcmVhdGluZyBhIEJhcmVNdXhDb25uZWN0aW9uIGFuZCBjYWxsaW5nIHNldFRyYW5zcG9ydCgpIG9yIHNldE1hbnVhbFRyYW5zcG9ydCgpIG9uIGl0IGJlZm9yZSB1c2luZyBCYXJlQ2xpZW50LiJ9KX1mdW5jdGlvbiByKHQsYSl7Y29uc29sZSAubm90ZTsgY29uc3Qgbj1sO2xldCBvPVthXTt0LmZldGNoPy5ib2R5JiZvLnB1c2godC5mZXRjaC5ib2R5KSx0LndlYnNvY2tldD8uY2hhbm5lbCYmby5wdXNoKHQud2Vic29ja2V0LmNoYW5uZWwpLGUuY2FsbChuLHttZXNzYWdlOnQscG9ydDphfSxvKX1mdW5jdGlvbiBpKHQpe3Qub25tZXNzYWdlPWFzeW5jIHQ9Pntjb25zdCBpPXQuZGF0YS5wb3J0LGs9dC5kYXRhLm1lc3NhZ2U7aWYoInBpbmciPT09ay50eXBlKWUuY2FsbChpLHt0eXBlOiJwb25nIn0);ZWxzZSBpZigiY2V0Ij09PWsudHlwZSl0cnl7Y29uc3QgdD1hc3luYyBmdW5jdGlvbigpe30uY29uc3RydWN0b3I7aWYoImJhcmUtbXV4LXJlbW90ZSI9PT1rLmNsaWVudC5mdW5jdGlvbilsPWsuY2xpZW50LmFyZ3NbMF0sbz1gYmFyZS1tdXgtcmVtb3RlICgke2suY2xpZW50LmFyZ3NbMV19KWB7ZWxzZXtjb25zdCBlPW5ldyB0KGsuY2xpZW50LmZ1bmN0aW9uKSxbYSxuXT1hd2FpdCBlKCk7bD1uZXcgYSguLi5rLmNsaWVudC5hcmdzKSxvPW59Y29uc29sZS5sb2coInNldCB0cmFuc3BvcnQgdG8gIixsLG8pLGUuY2FsbChpLHt0eXBlOiJzZXQifSl9Y2F0Y2goZSl7YShpLGUsInNldCIpfWVsc2UgaWYoImdldCI9PT1rLnR5cGUpaS5wb3N0TWVzc2FnZSh7dHlwZToiZ2V0IixuYW1lOm99KTtZWxzZSBpZigiZmV0Y2giPT09ay50eXBlKXRyeXtpZighbCl0aHJvdyBjKCk7aWYobCBpbnN0YW5jZW9mIE1lc3NhZ2VQb3J0KXJldHVybiB2b2lkIHIoayxpKTtsLnJlYWR5fHxhd2FpdCBsLmluaXQoKSxhd2FpdCBuKGssaSxsKX1jYXRjaChlKXthKGksaWUsImZldGNoIil9ZWxzZSBpZigiIHdlYnNvY2tldCI9PT1rLnR5cGUpdHJ5e2lmKCFsKXRocm93IGMoKTtpZihsIGluc3RhbmNlb2YgTWVzc2FnZVBvcnQpcmV0dXJuIHZvaWQgcihrLGkpO2wucmVhZHl8fGF3YWl0IGwuaW5pdCgpLGF3YWl0IGFzeW5jIGZ1bmN0aW9uKHQsYSwobil7Y29uc3RbcyxvXT1uLmNvbm5lY3QobmV3IFVSTCh0LndlYnNvY2tldC51cmwpLHQud2Vic29ja2V0LnByb3RvY29scyx0LndlYnNvY2tldC5yZXF1ZXN0SGVhZGVycywoYT0+e2UuY2FsbCh0LndlYnNvY2tldC5jaGFubmVsLHt0eXBlOiJvcGVuIixhcmdzOlthXX0pfSksKGE9PnthIGluc3RhbmNlb2YgQXJyYXlCdWZmZXI/ZS5jYWxsKHQud2Vic29ja2V0LmNoYW5uZWwse3R5cGU6Im1lc3NhZ2UiLGFyZ3M6W2FdfSxbYV0pOmUuY2FsbCh0LndlYnNvY2tldC5jaGFubmVsLHt0eXBlOiBtZXNzYWdlIixhcmdzOlthXX0pfSksKChhLG4pPT57ZS5jYWxsKHQud2Vic29ja2V0LmNoYW5uZWwse3R5cGU6ImNsb3NlIixhcmdzOlthLG5dfSl9KSwoYT0+e2UuY2FsbCh0LndlYnNvY2tldC5jaGFubmVsLHt0eXBlOiJlcnJvciIsYXJnczpbYV19KX0pKTt0LndlYnNvY2tldC5jaGFubmVsLm9ubWVzc2FnZT1lPT57ImRhdGEiPT09ZS5kYXRhLnR5cGU/cyhlLmRhdGEuZGF0YSk6ImNsb3NlIj09PWUuZGF0YS50eXBlJiZvKGUuZGF0YS5jbG9zZUNvZGUsZS5kYXRhLmNsb3NlUmVhc29uKX0sZS5jYWxsKGEse3R5cGU6IndlYnNvY2tldCJ9KX0oayxpLGwpfY2F0Y2goZSl7YWhpLGUsIndlYnNvY2tldCIpfX19bmV3IEJyb2FkY2FzdENoYW5uZWwoImJhcmUtbXV4IikucG9zdE1lc3NhZ2Uoe3R5cGU6InJlZnJlc2hQb3J0In0pLHNlbGYub25jb25uZWN0PWU9PntpKGUucG9ydHNbMF0pfSxjb25zb2xlLmRlYnVnKCJiYXJlLW11eDogcnVubmluZyB2Mi4xLjcgKGJ1aWxkIGM1NmQyODYpIil9KCk7Ci8vIyBzb3VyY2VNYXBwaW5nVVJMPXdvcmtlci5qcy5tYXA=`;
     const connection = new BareMux.BareMuxConnection(bareworker);
 
     const settings = document.getElementById("settings");
@@ -118,14 +237,13 @@
       return template.replace("%s", encodeURIComponent(input));
     }
 
-    // Single consolidated Form Submit Handler
+    // Fixed route router to cleanly stream inside the service worker context
     document.getElementById("search").addEventListener("submit", async (event) => {
       event.preventDefault();
       let fixedurl = search(document.getElementById("url").value);
       let src = scramjet.encodeUrl(fixedurl);
       
-      // Points correctly to your subfolder path on GitHub Pages
-      document.getElementById("iframe").src = "/frontended/" + src;
+      document.getElementById("iframe").src = "/frontended/scramjet/" + src;
     });
 
     const currentWisp = localStorage.getItem('selectedWisp') || "wss://gointospace.app/wisp/";
@@ -252,7 +370,7 @@
       const themes = JSON.parse(localStorage.getItem('customThemes') || '{}');
       if (!themes[sel]) return alert('Theme not found');
       delete themes[sel];
-      localStorage.setItem('customThemes', JSON.stringify(themes));
+      localStorage.setItem('selectedTheme', JSON.stringify(themes));
       populateCustomThemes();
     });
 
@@ -315,3 +433,5 @@
       localStorage.setItem('selectedTheme', selectedTheme);
     });
   </script>
+</body>
+</html>
