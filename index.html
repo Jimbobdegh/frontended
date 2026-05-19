@@ -136,7 +136,6 @@
       }
     })();
 
-    // Safely pull the controller loader from the global layer to fix the 'prefix' initialization crash
     let scramjet;
     try {
       const controllerLoad = window.$scramjetLoadController || $scramjetLoadController;
@@ -154,14 +153,12 @@
       console.error("Scramjet controller failed to initialize cleanly:", e); 
     }
 
-    // Register Service Worker with clean logs and explicit scoped paths
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register("./sw.js", { scope: "/frontended/" })
         .then(() => console.log("Service Worker registered successfully under scope: /frontended/"))
         .catch((e) => console.error("Service Worker registration dropped:", e));
     }
 
-    // Explicit file mapping instead of cross-origin data URI strings to resolve messaging connection loops
     const bareworker = "/frontended/worker.js";
     const connection = new BareMux.BareMuxConnection(bareworker);
 
@@ -249,12 +246,13 @@
 
     document.getElementById("search").addEventListener("submit", async (event) => {
       event.preventDefault();
-      if (!scramjet) return alert("Proxy wrapper engine is still booting up. Try again in an instance!");
+      if (!scramjet) return alert("Proxy wrapper engine is still booting up.");
       
       let fixedurl = search(document.getElementById("url").value);
       let src = scramjet.encodeUrl(fixedurl);
       
-      document.getElementById("iframe").src = "/frontended/scramjet/" + src;
+      // Removed the duplicated '/scramjet/' reference here to prevent nested looping
+      document.getElementById("iframe").src = "/frontended/" + src;
     });
 
     const currentWisp = localStorage.getItem('selectedWisp') || "wss://gointospace.app/wisp/";
