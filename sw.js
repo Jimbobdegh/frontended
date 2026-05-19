@@ -3,7 +3,7 @@ importScripts("https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
 const scramjet = new ScramjetServiceWorker({
     wisp: "wss://appointment-pose-mounts-republic.trycloudflare.com/wisp/",
-    prefix: "/frontended/scramjet/" // Added prefix here to align with the scope
+    prefix: "/frontended/scramjet/"
 });
 
 async function handleRequest(event) {
