@@ -1,8 +1,10 @@
 importScripts("https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/scramjet.all.js");
 const { ScramjetServiceWorker } = $scramjetLoadWorker();
-const scramjet = new ScramjetServiceWorker()
+const scramjet = new ScramjetServiceWorker({
+    wisp: "wss://appointment-pose-mounts-republic.trycloudflare.com/wisp/"
+})
 async function handleRequest(event) {
-  await scramjet.loadConfig()
+//  await scramjet.loadConfig()
   if (scramjet.route(event)) {return await scramjet.fetch(event)}
   return await fetch(event.request)
 }
