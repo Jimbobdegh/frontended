@@ -51,11 +51,12 @@
   <iframe id="iframe" src=""></iframe>
 
   <script type="module">
-    // 1. Cleanly import BareMux and Scramjet natively
     import * as BareMux from "https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/index.mjs";
+    
+    // We import the controller class explicitly via ES modules to solve the 'prefix of undefined' error
     import { ScramjetController } from "https://cdn.jsdelivr.net/gh/AerialiteLabs/tinyjet-frontend@latest/tinyjet/scramjet.controller.js";
 
-    // 2. Initialize the Proxy Controller
+    // Set correct paths relative to your GitHub sub-repository path
     const scramjet = new ScramjetController({ 
       prefix: "/frontended/scramjet/",
       files: { 
@@ -66,17 +67,16 @@
     });
     scramjet.init();
 
-    // 3. Register the Service Worker mapping to our subfolder
     if ('serviceWorker' in navigator) {
+      // Register with explicit repository path scoping
       navigator.serviceWorker.register("./sw.js", { scope: "/frontended/" })
-        .then(() => console.log("Service Worker Active"))
-        .catch(err => console.error("Service Worker Error:", err));
+        .then(() => console.log("Service Worker active under scope: /frontended/"))
+        .catch(err => console.error("Service Worker failed to hook:", err));
     }
 
-    // 4. Bind the BareMux communication worker to a real file path
+    // Direct registration pointing to your subfolder script file
     const connection = new BareMux.BareMuxConnection("/frontended/worker.js");
 
-    // 5. User Interface Logic
     const settings = document.getElementById("settings");
     const overlay = document.getElementById("overlay");
     const gear = document.getElementById("gear");
@@ -107,7 +107,6 @@
       radio.addEventListener('change', async (e) => await setTransport(e.target.value));
     });
 
-    // 6. Search and Routing Logic
     const searchTemplates = {
       google: "https://www.google.com/search?q=%s",
       bing: "https://www.bing.com/search?q=%s",
@@ -132,9 +131,21 @@
       const targetUrl = parseSearch(rawUrl);
       const encoded = scramjet.encodeUrl(targetUrl);
       
-      // Feed the encoded URL directly into the configured scramjet prefix
+      // Clean prefix resolution prevents double '/scramjet/scramjet/' redirection drops
       document.getElementById("iframe").src = "/frontended/scramjet/" + encoded;
     });
+
+    // Populate commit tag info cleanly
+    (async function fetchVersion() {
+      try {
+        const resp = await fetch('https://api.github.com/repos/AerialiteLabs/tinyjet-frontend/commits?per_page=1');
+        const data = await resp.json();
+        const sha = Array.isArray(data) ? data[0].sha : data.sha;
+        document.getElementById('version').textContent = "v-" + sha.slice(0, 7);
+      } catch (err) {
+        document.getElementById('version').textContent = "Production Target Ready";
+      }
+    })();
   </script>
 </body>
 </html>
